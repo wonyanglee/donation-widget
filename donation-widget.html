@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Donation List</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: transparent;
+    }
+    .donation-box {
+      background: rgba(30, 30, 30, 0.8);
+      border-radius: 16px;
+      padding: 20px 30px;
+      color: #f1f1f1;
+      max-width: 400px;
+      font-size: 18px;
+    }
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #888;
+      padding-bottom: 8px;
+    }
+    .donation-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="donation-box">
+    <div class="title">Donation List</div>
+    <div id="donation-list">
+      <!-- 리스트가 여기에 들어감 -->
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ID = "1ArsS6J98IKBcEumR5Tr9_OtZFMDMecWto4d-B6Abf-c";
+    const SHEET_NAME = "donations";
+    const API_KEY = "AIzaSyARghDjmB31mHM-Wtuoxb00z-0QSvAiClY";
+
+    async function fetchDonations() {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const rows = data.values.slice(1).reverse().slice(0, 5); // 최근 5개
+
+      const listEl = document.getElementById('donation-list');
+      listEl.innerHTML = rows.map(row => {
+        const name = row[1];
+        const amount = row[2];
+        const source = row[3];
+        return `<div class="donation-item">💖 ${name} (${source})<span>₩${Number(amount).toLocaleString()}</span></div>`;
+      }).join('');
+    }
+
+    fetchDonations();
+    setInterval(fetchDonations, 15000); // 15초마다 업데이트
+  </script>
+</body>
+</html>
